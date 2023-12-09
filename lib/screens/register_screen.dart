@@ -1,64 +1,133 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
-import 'login_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:mine_manager/blocs/register_bloc/register_bloc.dart';
+import '../blocs/register_bloc/register_event.dart';
+import '../blocs/register_bloc/register_state.dart';
+import 'home_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
-  @override
-  _RegisterScreenState createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
-  String _email = '';
-  String _username = '';
-  String _password = '';
-
-  void _submit() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      final response = await AuthService().register(_email, _username, _password);
-
-      if (response.statusCode == 201) {
-        if(mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
-          );
-        }
-      } else {
-      }
-    }
-  }
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final registerBloc = BlocProvider.of<RegisterBloc>(context);
+    final GlobalKey<FormBuilderState> fbKey = GlobalKey<FormBuilderState>();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Email'),
-              onSaved: (value) => _email = value!,
-              validator: (value) => value!.contains('@') ? null : 'Invalid email',
+      appBar: AppBar(title: const Text('Connexion')),
+      body: BlocConsumer<RegisterBloc, RegisterState>(
+        listener: (context, state) {
+          if (state is RegisterSuccess) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          }
+          if (state is RegisterFailure) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Erreur de connexion'),
+                content: Text(state.error),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return FormBuilder(
+            key: fbKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: FormBuilderTextField(
+                    name: 'username',
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Nom d'utilisateur",
+                    ),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(errorText: 'Ce champ est obligatoire'),
+                    ]),
+                    onChanged: (value) => registerBloc.add(RegisterUsernameChanged(value!)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: FormBuilderTextField(
+                    name: 'email',
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Email',
+                    ),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(errorText: 'Ce champ est obligatoire'),
+                      FormBuilderValidators.email(errorText: 'Email invalide'),
+                    ]),
+                    onChanged: (value) => registerBloc.add(RegisterEmailChanged(value!)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: FormBuilderTextField(
+                    name: 'password',
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Mot de passe',
+                    ),
+                    validator: FormBuilderValidators.required(errorText: 'Ce champ est obligatoire'),
+                    onChanged: (value) => registerBloc.add(RegisterPasswordChanged(value!)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: FormBuilderTextField(
+                    name: 'confirmPassword',
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Confirmer le mot de passe',
+                    ),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(errorText: 'Ce champ est obligatoire'),
+                    ]),
+                    onChanged: (value) => registerBloc.add(RegisterConfirmPasswordChanged(value!)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                state is RegisterLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: () {
+                    if (fbKey.currentState!.validate()) {
+                      fbKey.currentState!.save();
+                      registerBloc.add(RegisterSubmitted());
+                    }
+                  },
+                  child: const Text("S'inscrire"),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Déjà inscrit ?'),
+                ),
+              ],
             ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Username'),
-              onSaved: (value) => _username = value!,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-              onSaved: (value) => _password = value!,
-            ),
-            ElevatedButton(
-              onPressed: _submit,
-              child: const Text('Register'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
