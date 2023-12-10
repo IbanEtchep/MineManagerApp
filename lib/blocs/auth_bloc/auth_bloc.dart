@@ -9,6 +9,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required this.userRepository}) : super(AuthInitial()) {
 
     on<AuthStarted>((event, emit) async {
+      print("AuthStarted");
       try {
         final user = await userRepository.getUser();
         emit(AuthAuthenticated(user: user));
@@ -29,6 +30,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 
     on<AuthLoggedOut>((event, emit) async {
+      print("AuthLoggedOut");
       await userRepository.logout();
       emit(AuthUnauthenticated());
     });

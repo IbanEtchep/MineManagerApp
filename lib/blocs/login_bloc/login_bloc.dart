@@ -7,11 +7,10 @@ import '../../repositories/user_repository.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final UserRepository userRepository;
-  final AuthBloc authBloc;
   String email = '';
   String password = '';
 
-  LoginBloc({required this.userRepository, required this.authBloc}) : super(LoginInitial()) {
+  LoginBloc({required this.userRepository}) : super(LoginInitial()) {
 
     on<LoginEmailChanged>((event, emit) {
       email = event.email;
@@ -26,7 +25,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         await userRepository.login(email, password);
         emit(LoginSuccess());
-        authBloc.add(AuthLoggedIn());
       } catch (e) {
         emit(LoginFailure((e.toString())));
       }

@@ -2,11 +2,11 @@ import '../models/user.dart';
 import '../services/auth_service.dart';
 
 class UserRepository {
-  final AuthService _authService = AuthService();
+  final AuthService _authService;
+
+  UserRepository({required AuthService authService}) : _authService = authService;
 
   Future<User> login(String email, String password) async {
-    print(email);
-    print(password);
     final response = await _authService.login(email, password);
     if (response.success) {
       return await getUser();
