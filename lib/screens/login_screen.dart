@@ -8,7 +8,6 @@ import '../blocs/auth_bloc/auth_event.dart';
 import '../blocs/login_bloc/login_bloc.dart';
 import '../blocs/login_bloc/login_event.dart';
 import '../blocs/login_bloc/login_state.dart';
-import '../repositories/user_repository.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

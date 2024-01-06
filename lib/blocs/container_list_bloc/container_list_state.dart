@@ -12,8 +12,8 @@ class ContainerListLoaded extends ContainerListState {
   ContainerListLoaded(this.containers);
 }
 
-class ContainersError extends ContainerListState {
+class ContainerListError extends ContainerListState {
   final String message;
 
-  ContainersError(this.message);
+  ContainerListError(this.message);
 }

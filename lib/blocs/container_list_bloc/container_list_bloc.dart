@@ -13,7 +13,7 @@ class ContainerListBloc extends Bloc<ContainerListEvent, ContainerListState> {
         final containers = await containerRepository.getContainers();
         emit(ContainerListLoaded(containers));
       } catch (e) {
-        emit(ContainersError((e.toString())));
+        emit(ContainerListError(e.toString()));
       }
     });
   }

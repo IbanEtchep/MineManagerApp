@@ -90,11 +90,8 @@ class AuthGate extends StatelessWidget {
     final authBloc = BlocProvider.of<AuthBloc>(context);
     authBloc.add(AuthStarted());
 
-    print('authGate');
-
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        print(state);
         if (state is AuthAuthenticated) {
           Navigator.pushReplacementNamed(context, '/home');
         }

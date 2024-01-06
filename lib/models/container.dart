@@ -3,8 +3,8 @@ class DockerContainer {
   final String name;
   final String image;
   final String state;
-  final double cpuUsage;
-  final double memoryUsage;
+  final int cpuUsage;
+  // final int memoryUsage;
 
   DockerContainer({
     required this.id,
@@ -12,7 +12,7 @@ class DockerContainer {
     required this.image,
     required this.state,
     required this.cpuUsage,
-    required this.memoryUsage,
+    // required this.memoryUsage,
   });
 
   factory DockerContainer.fromJson(Map<String, dynamic> json) {
@@ -21,8 +21,8 @@ class DockerContainer {
       name: json['name'],
       image: json['image'],
       state: json['state'],
-      cpuUsage: double.parse(json['cpuUsage'].toString()),
-      memoryUsage: double.parse(json['memoryUsage'].toString()),
+      cpuUsage: int.parse(json['cpuUsage'].toString()),
+      // memoryUsage: int.parse(json['memoryUsage'].toString()),
     );
   }
 }
