@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mine_manager/blocs/register_bloc/register_bloc.dart';
+import 'package:mine_manager/constants.dart';
 import 'package:mine_manager/repositories/container_repository.dart';
 import 'package:mine_manager/repositories/user_repository.dart';
 import 'package:mine_manager/screens/home_screen.dart';
@@ -59,6 +61,22 @@ class MyApp extends StatelessWidget {
       ),
     ];
 
+    const int primaryColorValue = 0xFF142f3f;
+    const MaterialColor primaryColor = MaterialColor(
+      primaryColorValue,
+      <int, Color>{
+        50: Color(primaryColorValue),
+        100: Color(primaryColorValue),
+        200: Color(primaryColorValue),
+        300: Color(primaryColorValue),
+        400: Color(primaryColorValue),
+        500: Color(primaryColorValue),
+        600: Color(primaryColorValue),
+        700: Color(primaryColorValue),
+        800: Color(primaryColorValue),
+        900: Color(primaryColorValue),
+      },
+    );
 
     return MultiRepositoryProvider(
         providers: repositoryProviders,
@@ -66,10 +84,10 @@ class MyApp extends StatelessWidget {
           providers: blocProviders,
           child: MaterialApp(
             title: 'Mine Manager',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
             debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: primaryColor,
+            ),
             initialRoute: '/login',
             routes: {
               '/login': (context) => const AuthGate(),
