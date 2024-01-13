@@ -15,7 +15,8 @@ class DockerService {
     try {
       String? token = await authService.getToken();
       if (token == null) {
-        return ApiResponse(success: false, errorMessage: "Vous n'êtes pas authentifié");
+        return ApiResponse(
+            success: false, errorMessage: "Vous n'êtes pas authentifié");
       }
 
       final response = await http.get(
@@ -26,11 +27,40 @@ class DockerService {
       if (response.statusCode == 200) {
         return ApiResponse(success: true, data: jsonDecode(response.body));
       } else {
-        return ApiResponse(success: false, errorMessage: "Erreur de récupération des données");
+        return ApiResponse(
+            success: false,
+            errorMessage:
+                "Erreur de récupération des données. Code erreur ${response.statusCode}");
       }
     } catch (e) {
-      return ApiResponse(success: false, errorMessage: "Erreur de réseau ou serveur");
+      return ApiResponse(
+          success: false, errorMessage: "Erreur de réseau ou serveur");
     }
   }
 
+  Future<ApiResponse> getContainer(String id) async {
+    try {
+      String? token = await authService.getToken();
+      if (token == null) {
+        return ApiResponse(
+            success: false, errorMessage: "Vous n'êtes pas authentifié");
+      }
+
+      final response = await http.get(
+        Uri.parse('$apiUrl/docker/containers/$id'),
+        headers: <String, String>{'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        return ApiResponse(success: true, data: jsonDecode(response.body));
+      } else {
+        return ApiResponse(success: false,
+            errorMessage: "Erreur de récupération des données. Code erreur ${response
+                .statusCode}");
+      }
+    } catch (e) {
+      return ApiResponse(
+          success: false, errorMessage: "Erreur de réseau ou serveur");
+    }
+  }
 }

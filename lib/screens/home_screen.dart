@@ -16,60 +16,111 @@ class HomeScreen extends StatelessWidget {
     var containerListBloc = BlocProvider.of<ContainerListBloc>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        leading: const Icon(Icons.home),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => {
-              authBloc.add(AuthLoggedOut()),
-              Navigator.pushReplacementNamed(context, '/login')
-            },
-          )
-        ],
-      ),
-      body: BlocConsumer<ContainerListBloc, ContainerListState>(
-        listener: (context, state) {
-          if (state is ContainerListError) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                ),
-              );
-          }
-        },
-        builder: (context, state) {
-          if (state is ContainerListInitial) {
-            containerListBloc.add(LoadContainerListEvent());
-          }
-
-          if (state is ContainerListLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state is ContainerListLoaded) {
-            return ListView.builder(
-              itemCount: state.containers.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(state.containers[index].name),
-                );
+        appBar: AppBar(
+          title: const Text('Home'),
+          leading: const Icon(Icons.home),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () => containerListBloc.add(LoadContainerListEvent()),
+            ),
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () => {
+                authBloc.add(AuthLoggedOut()),
+                Navigator.pushReplacementNamed(context, '/login')
               },
-            );
-          }
+            )
+          ],
+        ),
+        body: BlocConsumer<ContainerListBloc, ContainerListState>(
+          listener: (context, state) {
+            if (state is ContainerListError) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                  ),
+                );
+            }
+          },
+          builder: (context, state) {
+            if (state is ContainerListInitial) {
+              containerListBloc.add(LoadContainerListEvent());
+            }
 
-          if (state is ContainerListError) {
-            return Center(
-              child: Text(state.message),
-            );
-          }
+            if (state is ContainerListLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          return const Center(child: CircularProgressIndicator());
-        },
-      )
-    );
+            if (state is ContainerListLoaded) {
+              return ListView.builder(
+                itemCount: state.containers.length,
+                itemBuilder: (context, index) {
+                  var container = state.containers[index];
+
+                  return ListTile(
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Icon(Icons.storage),
+                        const SizedBox(width: 10),
+                        Text(container.getDisplayName()),
+                      ],
+                    ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        const Icon(Icons.memory),
+                        Text("${container.cpuUsage}%"),
+                        const SizedBox(width: 10),
+                        const Icon(Icons.sd_storage),
+                        Text(_formatMemoryUsage(container.memoryUsage)),
+                        const SizedBox(width: 10),
+                        Container(
+                          height: 15,
+                          width: 15,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _getStatusColor(container.state),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            }
+
+            if (state is ContainerListError) {
+              return Center(
+                child: Text(state.message),
+              );
+            }
+
+            return const Center(child: CircularProgressIndicator());
+          },
+        ));
+  }
+
+  Color _getStatusColor(String state) {
+    switch (state) {
+      case 'running':
+        return Colors.green;
+      case 'exited':
+        return Colors.red;
+      default:
+        return Colors.orange;
+    }
+  }
+
+  String _formatMemoryUsage(int memoryUsage) {
+    double memoryInMiB = memoryUsage / (1024 * 1024);
+    if (memoryInMiB > 1024) {
+      return "${(memoryInMiB / 1024).toStringAsFixed(2)} GiB";
+    } else {
+      return "${memoryInMiB.toStringAsFixed(2)} MiB";
+    }
   }
 }
