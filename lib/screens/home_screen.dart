@@ -76,18 +76,21 @@ class HomeScreen extends StatelessWidget {
                         Text("${container.cpuUsage}%"),
                         const SizedBox(width: 10),
                         const Icon(Icons.sd_storage),
-                        Text(_formatMemoryUsage(container.memoryUsage)),
+                        Text(container.getMemoryUsageFormatted()),
                         const SizedBox(width: 10),
                         Container(
                           height: 15,
                           width: 15,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _getStatusColor(container.state),
+                            color: container.getStatusColor(),
                           ),
                         ),
                       ],
                     ),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/container', arguments: container.id);
+                    }
                   );
                 },
               );
@@ -102,25 +105,5 @@ class HomeScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           },
         ));
-  }
-
-  Color _getStatusColor(String state) {
-    switch (state) {
-      case 'running':
-        return Colors.green;
-      case 'exited':
-        return Colors.red;
-      default:
-        return Colors.orange;
-    }
-  }
-
-  String _formatMemoryUsage(int memoryUsage) {
-    double memoryInMiB = memoryUsage / (1024 * 1024);
-    if (memoryInMiB > 1024) {
-      return "${(memoryInMiB / 1024).toStringAsFixed(2)} GiB";
-    } else {
-      return "${memoryInMiB.toStringAsFixed(2)} MiB";
-    }
   }
 }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mine_manager/blocs/register_bloc/register_bloc.dart';
-import 'package:mine_manager/constants.dart';
 import 'package:mine_manager/repositories/container_repository.dart';
 import 'package:mine_manager/repositories/user_repository.dart';
+import 'package:mine_manager/screens/container_view_screen.dart';
 import 'package:mine_manager/screens/home_screen.dart';
 import 'package:mine_manager/screens/login_screen.dart';
 import 'package:mine_manager/screens/register_screen.dart';
@@ -83,24 +82,26 @@ class MyApp extends StatelessWidget {
         child: MultiBlocProvider(
           providers: blocProviders,
           child: MaterialApp(
-            title: 'Mine Manager',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primarySwatch: primaryColor,
-            ),
-            initialRoute: '/login',
-            routes: {
-              '/login': (context) => const AuthGate(),
-              '/register': (context) => const RegisterScreen(),
-              '/home': (context) => const HomeScreen(),
-            }
+              title: 'Mine Manager',
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                primarySwatch: primaryColor,
+              ),
+              initialRoute: '/login',
+              routes: {
+                '/login': (context) => const AuthGate(),
+                '/register': (context) => const RegisterScreen(),
+                '/home': (context) => const HomeScreen(),
+                '/container': (context) => ContainerViewScreen(
+                  containerId: ModalRoute.of(context)!.settings.arguments as String,
+                ),
+              }
           ),
         ));
   }
 }
 
 class AuthGate extends StatelessWidget {
-
   const AuthGate({super.key});
 
   @override

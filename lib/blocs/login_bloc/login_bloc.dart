@@ -1,6 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mine_manager/blocs/auth_bloc/auth_event.dart';
-import '../auth_bloc/auth_bloc.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 import '../../repositories/user_repository.dart';
