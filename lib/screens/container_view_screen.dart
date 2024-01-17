@@ -16,10 +16,10 @@ class ContainerViewScreen extends StatefulWidget {
   const ContainerViewScreen({super.key, required this.containerId});
 
   @override
-  _ContainerViewScreenState createState() => _ContainerViewScreenState();
+  ContainerViewScreenState createState() => ContainerViewScreenState();
 }
 
-class _ContainerViewScreenState extends State<ContainerViewScreen> {
+class ContainerViewScreenState extends State<ContainerViewScreen> {
   final TextEditingController _commandInputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 

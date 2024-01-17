@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Home'),
+          title: const Text('MineManager'),
           leading: const Icon(Icons.home),
           actions: [
             IconButton(

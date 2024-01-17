@@ -193,7 +193,6 @@ class DockerService {
             errorMessage: "Erreur de récupération des données. Code erreur ${response.statusCode}");
       }
     } catch (e) {
-      print(e);
       return ApiResponse(
           success: false, errorMessage: "Erreur de réseau ou serveur");
     }

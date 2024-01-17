@@ -16,7 +16,6 @@ class SocketService {
     });
 
     socket.onConnect((_) {
-      print('Connected to WebSocket');
       socket.emit('subscribe', {'containerId': containerId});
     });
 
@@ -45,7 +44,6 @@ class SocketService {
   Stream<DockerContainer> get stateStream => _dockerInfoUpdateStreamController.stream;
 
   void dispose() {
-    print('Closing WebSocket connection');
     socket.emit('unsubscribe');
     socket.dispose();
     _logStreamController.close();
