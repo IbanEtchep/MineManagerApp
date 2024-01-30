@@ -11,8 +11,6 @@ class ContainerBloc extends Bloc<ContainerEvent, ContainerState> {
   final String containerId;
 
   ContainerBloc(this.containerRepository, this.socketService ,this.containerId) : super(ContainerInitialState()) {
-    add(LoadContainerEvent(containerId));
-
     on<LoadContainerEvent>((event, emit) async {
       var container = await containerRepository.getContainer(containerId);
       emit(ContainerLoaded(container));
@@ -37,6 +35,8 @@ class ContainerBloc extends Bloc<ContainerEvent, ContainerState> {
     on<SendContainerCommandEvent>((event, emit) async {
       containerRepository.sendCommand(containerId, event.command);
     });
+
+    add(LoadContainerEvent(containerId));
   }
 
   @override

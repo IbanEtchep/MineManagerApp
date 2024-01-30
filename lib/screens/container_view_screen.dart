@@ -97,13 +97,13 @@ class ContainerViewScreenState extends State<ContainerViewScreen> {
 
           return BlocBuilder<ContainerInfoUpdateCubit, DockerContainer?>(
             builder: (context, dockerContainer) {
-              String containerState = dockerContainer?.state ?? '';
-              bool isRunning = containerState.toLowerCase() == 'running';
-              bool isExited = containerState.toLowerCase() == 'exited';
-
               if(dockerContainer != null) {
                 container = dockerContainer;
               }
+
+              String containerState = container.state;
+              bool isRunning = containerState.toLowerCase() == 'running';
+              bool isExited = containerState.toLowerCase() == 'exited';
 
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
